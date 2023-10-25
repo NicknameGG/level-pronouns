@@ -4,6 +4,8 @@ Elevate your levels to a new level with personalized pronouns! Say goodbye to th
 
 > Based on [this amazing reddit post](https://www.reddit.com/r/geometrydash/comments/178xm3l/thoughts_on_demons_having_pronouns_in_22_i_think/?rdt=48760) by IsopropylAlcohol_
 
+> Logo by **croozington**
+
 ## Overview
 
 The "Level Pronouns" mod enhances your gaming environment by adding pronouns to individual levels. Now, every level can have its own identity, thanks to the following pronouns:
