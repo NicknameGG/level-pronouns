@@ -3,6 +3,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_C_FLAGS -m32)
 set(CMAKE_CXX_FLAGS -m32)
+set(CMAKE_OSX_ARCHITECTURES "x86_64")
 
 project(LevelPronouns VERSION 1.0.0)
 
@@ -24,6 +25,9 @@ else()
 endif()
 
 add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
+
+CPMAddPackage("gh:camila314/UIBuilder#main")
+target_link_libraries(${PROJECT_NAME} UIBuilder)
 
 # Set up dependencies, resources, link Geode
 setup_geode_mod(${PROJECT_NAME})
