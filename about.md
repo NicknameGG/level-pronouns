@@ -15,6 +15,8 @@ The "Level Pronouns" mod enhances your gaming environment by adding pronouns to 
 - She/Her
 - He/Him
 - They/Them
+- He/They
+- She/They
 - It/Its
 - Any/All
 
@@ -23,8 +25,10 @@ The "Level Pronouns" mod enhances your gaming environment by adding pronouns to 
 In addition to traditional pronouns, this mod introduces neopronouns for a more diverse experience. Neopronouns are unique and personal pronoun sets, and they include:
 
 - Ze/Hir
+- Ze/Zir
 - Xe/Xem
 - E/Eir
+- Ey/Em
 - Per/Per
 
 ## Customization
@@ -36,6 +40,9 @@ We understand that not everyone may want to use neopronouns. That's why we give 
 To maintain balance and diversity, the mod randomly assigns pronouns to levels. We aim for a more inclusive and representative gaming experience, so the probability of neopronouns being assigned to a level is set at 20%.
 
 Now, every level in your game can have its own unique identity and pronoun, making your gaming experience more immersive and inclusive.
+
+## TODO
+* Make levels have multiple pronouns
 
 ---
 
