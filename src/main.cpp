@@ -36,7 +36,7 @@ char const* neopronounList[] = {
     "Fae/Faer"
 };
 
-constexpr char const* getPronoun(int levelID) {
+char const* getPronoun(int levelID) {
 	size_t index = levelHash(levelID) % (sizeof(pronounList) / sizeof(char*));
 
 	// Due to the fact that neo-pronouns are less common, we'll make them less likely to appear.
