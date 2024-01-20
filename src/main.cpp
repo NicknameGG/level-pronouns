@@ -1,5 +1,8 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/LevelInfoLayer.hpp>
+#include <Geode/modify/LevelCell.hpp>
+
+#include <UIBuilder.hpp>
 
 using namespace geode::prelude;
 
@@ -45,29 +48,36 @@ char const* getPronoun(int levelID) {
 
 
 class $modify( LevelInfoLayer ) {
- 	bool init( GJGameLevel* p0, bool p1 ) {
-		if ( !LevelInfoLayer::init( p0, p1 ) )
+ 	bool init(GJGameLevel* level, bool p1) {
+		if ( !LevelInfoLayer::init(level, p1) )
 			return false;
 		
-		CCLabelBMFont* label = CCLabelBMFont::create( getPronoun( p0->m_levelID ), "bigFont.fnt" );
-		label->setScale( 0.4 );
-		label->setAnchorPoint( { 0.5, 0.5 } );
-		label->setPosition( { CCDirector::sharedDirector()->getWinSize().width / 2, CCDirector::sharedDirector()->getWinSize().height - 36 } );
-		this->addChild( label, 100 );
+		Build<CCLabelBMFont>::create(getPronoun(level->m_levelID), "bigFont.fnt")
+			.scale(0.4)
+			.anchorPoint({0.5, 0.5})
+			.center()
+			.posY(CCDirector::sharedDirector()->getWinSize().height - 36)
+			.id("pronoun-label")
+			.parent(this);
 
-
-		// For each all children and find the one with 7 or more children
-		auto children = CCArrayExt<CCNode>(this->getChildren());
-		for (auto child : children) {
-			if (auto menu = typeinfo_cast<CCMenu*>(child)) {
-				if ( menu->getChildrenCount() >= 7 ) {
-					// Move "By <username>" down a bit
-					auto author = as<CCMenuItemSpriteExtra*>(menu->getChildren()->objectAtIndex(0));
-					author->setPosition( { author->getPositionX(), author->getPositionY() - 7 } );
-				}
-			}
-		}
+		// Move "By <username>" down a bit
+		Build(this->getChildByIDRecursive("creator-name")).move(0 , -7);
 
 		return true;
 	} 
+};
+
+class $modify( LevelCell ) {
+	TodoReturn loadFromLevel(GJGameLevel* level) {
+		LevelCell::loadFromLevel(level);
+
+		Build<CCLabelBMFont>::create(getPronoun(level->m_levelID), "chatFont.fnt")
+				.scale(0.3)
+				.color(0, 0, 0)
+				.opacity(100)
+				.pos(this->m_backgroundLayer->getContentSize() - ccp(10, 3))
+				.anchorPoint({1, 1})
+				.id("pronoun-label")
+				.parent(this->m_mainLayer);
+	}
 };

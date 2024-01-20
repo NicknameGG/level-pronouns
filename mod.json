@@ -1,10 +1,21 @@
 {
 	"geode": "2.0.0",
-	"version": "v1.0.1",
+	"version": "v1.0.2",
 	"id": "n.level_pronouns",
 	"name": "Level Pronouns",
 	"developer": "n",
 	"description": "Enchance 2.2 with pronouns on levels!",
+	"dependencies": [
+		{
+			"id": "geode.node-ids",
+			"version": ">=1.1.1",
+			"importance": "required"
+		}
+	],
+	"gd": {
+		"android": "2.200",
+        "win": "2.204"
+	},
 	"settings": {
 		"neopronouns": {
 			"name": "Use Neopronouns",
