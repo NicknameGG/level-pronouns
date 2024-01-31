@@ -1,6 +1,6 @@
 {
 	"geode": "2.0.0",
-	"version": "v1.0.2",
+	"version": "v1.0.3",
 	"id": "n.level_pronouns",
 	"name": "Level Pronouns",
 	"developer": "n",
@@ -13,7 +13,7 @@
 		}
 	],
 	"gd": {
-		"android": "2.200",
+		"android": "2.205",
         "win": "2.204"
 	},
 	"settings": {
