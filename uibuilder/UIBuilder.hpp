@@ -298,12 +298,12 @@ namespace uibuilder {
 		setter(CCLayer, touchPrio, setTouchPriority, bool)
 		setter(CCLayer, keypad_enabled, setKeypadEnabled, bool)
 
-		template <needs_base(CCLayer)>
-		Build<T> initTouch() {
-			registerTouchDispatcher();
-			CCDirector::sharedDirector()->getTouchDispatcher()->incrementForcePrio(2);
-			return touchEnabled(true).mouseEnabled(true);
-		}
+		// template <needs_base(CCLayer)>
+		// Build<T> initTouch() {
+		// 	registerTouchDispatcher();
+		// 	CCDirector::sharedDirector()->getTouchDispatcher()->incrementForcePrio(2);
+		// 	return touchEnabled(true).mouseEnabled(true);
+		// }
 
 		template <needs_base(CCLayer)>
 		Build<CCScene> intoScene() {
