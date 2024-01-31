@@ -23,8 +23,7 @@ endif()
 
 add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
 
-
-CPMAddPackage("gh:camila314/UIBuilder#main")
+add_subdirectory(uibuilder)
 target_link_libraries(${PROJECT_NAME} UIBuilder)
 
 setup_geode_mod(${PROJECT_NAME} EXTERNALS geode.node-ids:1.1.1)
