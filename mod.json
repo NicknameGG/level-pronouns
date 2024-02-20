@@ -1,10 +1,11 @@
 {
 	"geode": "2.0.0",
-	"version": "v1.0.3",
+	"version": "v1.0.4",
 	"id": "n.level_pronouns",
 	"name": "Level Pronouns",
 	"developer": "n",
-	"description": "Enchance 2.2 with pronouns on levels!",
+	"description": "Enhance 2.2 with pronouns on levels!",
+	"repository": "https://github.com/NicknameGG/level-pronouns",
 	"dependencies": [
 		{
 			"id": "geode.node-ids",

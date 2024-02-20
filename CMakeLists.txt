@@ -6,7 +6,7 @@ set(CMAKE_C_FLAGS -m32)
 set(CMAKE_CXX_FLAGS -m32)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
-project(level-pronouns VERSION 1.0.0)
+project(level-pronouns VERSION 1.0.4)
 
 file(GLOB SOURCES
 	src/*.cpp
