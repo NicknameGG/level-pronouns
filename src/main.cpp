@@ -73,7 +73,7 @@ class $modify( LevelCell ) {
 
 		Build<CCLabelBMFont>::create(getPronoun(level->m_levelID), "chatFont.fnt")
 				.scale(0.3)
-				.color(0, 0, 0)
+				.color(Mod::get()->getSettingValue<bool>("White Text") ? ccc3(255, 255, 255) : ccc3(0, 0, 0))
 				.opacity(100)
 				.pos(this->m_backgroundLayer->getContentSize() - ccp(10, 3))
 				.anchorPoint({1, 1})

@@ -22,6 +22,12 @@
 			"description": "Use neopronouns in levels. <cy>Warning</c>: Disabling will make levels with neopronouns have normal pronouns.",
 			"type": "bool",
 			"default": true
+		},
+		"White Text": {
+			"type": "bool",
+			"name": "White Text",
+			"description": "Use black text for pronouns. In case you have dark mode mod.",
+			"default": false
 		}
 	}
 }
