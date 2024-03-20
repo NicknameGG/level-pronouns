@@ -1,6 +1,3 @@
-# Warning !!!
-## **This is the beta branch! This code will change in the future when 2.2 Geode is ready for release !!**
-
 # Level Pronouns
 
 Elevate your levels to a new level with personalized pronouns! Say goodbye to the oppression of pronoun-less levels, and welcome a more inclusive gaming experience.
