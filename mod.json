@@ -6,9 +6,12 @@
 		"mac": "2.206",
 		"ios": "2.206"
 	},
+	"tags": [
+		"joke",
+	],
 	"id": "n.level-pronouns",
 	"name": "level-pronouns",
-	"version": "v1.1.0",
+	"version": "v1.1.1",
 	"developer": "n",
 	"description": "Enhance 2.2 with pronouns on levels!",
 	"repository": "https://github.com/NicknameGG/level-pronouns",
