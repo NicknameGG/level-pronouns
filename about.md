@@ -43,9 +43,6 @@ To maintain balance and diversity, the mod randomly assigns pronouns to levels. 
 
 Now, every level in your game can have its own unique identity and pronoun, making your gaming experience more immersive and inclusive.
 
-## TODO
-* Make levels have multiple pronouns
-
 ---
 
 Feel free to pr more pronouns to the list :3

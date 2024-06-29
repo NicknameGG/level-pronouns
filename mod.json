@@ -1,8 +1,14 @@
 {
-	"geode": "2.0.0",
-	"version": "v1.0.4",
-	"id": "n.level_pronouns",
-	"name": "Level Pronouns",
+	"geode": "3.0.0",
+	"gd": {
+		"win": "2.206",
+		"android": "2.206",
+		"mac": "2.206",
+		"ios": "2.206"
+	},
+	"id": "n.level-pronouns",
+	"name": "level-pronouns",
+	"version": "v1.1.0",
 	"developer": "n",
 	"description": "Enhance 2.2 with pronouns on levels!",
 	"repository": "https://github.com/NicknameGG/level-pronouns",
@@ -13,10 +19,6 @@
 			"importance": "required"
 		}
 	],
-	"gd": {
-		"android": "2.205",
-        "win": "2.204"
-	},
 	"settings": {
 		"neopronouns": {
 			"name": "Use Neopronouns",

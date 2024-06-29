@@ -52,7 +52,7 @@ class $modify( LevelInfoLayer ) {
 		if ( !LevelInfoLayer::init(level, p1) )
 			return false;
 		
-		Build<CCLabelBMFont>::create(getPronoun(level->m_levelID), "bigFont.fnt")
+		auto pronoun = Build<CCLabelBMFont>::create(getPronoun(level->m_levelID), "bigFont.fnt")
 			.scale(0.4)
 			.anchorPoint({0.5, 0.5})
 			.center()
@@ -63,12 +63,23 @@ class $modify( LevelInfoLayer ) {
 		// Move "By <username>" down a bit
 		Build(this->getChildByIDRecursive("creator-name")).move(0 , -7);
 
+		auto yPos = pronoun.collect()->getPositionY();
+		
+		// copy-indicator fix
+		if (auto copyIndicator = this->getChildByIDRecursive("copy-indicator")) {
+			copyIndicator->setPositionY(yPos);
+		}
+
+		// high-object-indicator fix
+		if (auto highObjectIndicator = this->getChildByIDRecursive("high-object-indicator")) {
+			highObjectIndicator->setPositionY(yPos);
+		}
 		return true;
 	} 
 };
 
 class $modify( LevelCell ) {
-	TodoReturn loadFromLevel(GJGameLevel* level) {
+	void loadFromLevel(GJGameLevel* level) {
 		LevelCell::loadFromLevel(level);
 
 		Build<CCLabelBMFont>::create(getPronoun(level->m_levelID), "chatFont.fnt")
