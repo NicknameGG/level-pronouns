@@ -22,6 +22,13 @@
 			"importance": "required"
 		}
 	],
+	"incompatibilities": [
+		{
+			"id": "n.level_pronouns",
+			"version": "*",
+			"importance": "superseded"
+		}
+	],
 	"settings": {
 		"neopronouns": {
 			"name": "Use Neopronouns",
