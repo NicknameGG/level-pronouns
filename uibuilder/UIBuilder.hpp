@@ -13,6 +13,10 @@ namespace uibuilder {
 	using namespace cocos2d;
 	using namespace cocos2d::extension;
 
+	#ifdef GEODE_DLL
+	using geode::Layout;
+	#endif
+
 	template <typename T> requires (std::derived_from<T, CCObject>)
 	class Build;
 
@@ -79,6 +83,23 @@ namespace uibuilder {
 	 	}
 	};
 
+	class BuildAction : public CCActionInstant {
+	    std::function<void(float)> m_callback;
+	public:
+	    inline static BuildAction* create(std::function<void(float)> cb) {
+	        auto ba = new BuildAction;
+
+	        ba->autorelease();
+	        ba->m_callback = cb;
+	        return ba;
+	    }
+
+	    void update(float time) override {
+	        m_callback(time);
+	    }
+	};
+
+
 	// the thing
 
 	inline std::vector<void*> buildStack;
@@ -111,12 +132,19 @@ namespace uibuilder {
 	 		return *this;
 	 	}
 
+		#ifdef GEODE_PLATFORM_TARGET
+		Build<T> store(geode::Ref<T>& in) {
+			in = m_item;
+			return *this;
+		}
+		#endif
+
 	 	template <typename ...Args> requires requires(Args... args) {
 	 		T::create(args...);
 	 	}
 	 	static Build<T> create(Args... args) {
 	 		return Build(T::create(args...));
-	 	} 
+	 	}
 
 		Build(T* item) : m_item(item) {}
 
@@ -124,6 +152,12 @@ namespace uibuilder {
 
 		template <typename U> requires std::derived_from<T, U>
 		operator U*() { return m_item; }
+
+		T* operator->() { return m_item; }
+
+		// CCObject
+
+		setter(CCObject, tag, setTag, int)
 
 		// CCArray
 
@@ -136,6 +170,16 @@ namespace uibuilder {
 		template <needs_base(CCArray), typename U>
 		Build<U> intoItemAt(unsigned int index) {
 			return Build<U>(m_item->objectAtIndex(index));
+		}
+
+		Build<T> with(std::function<void(T*)> fn) {
+			fn(m_item);
+			return *this;
+		}
+
+		template <typename U>
+		Build<U> as() {
+			return Build<U>(static_cast<U*>(m_item));
 		}
 
 		template <typename U, needs_base(CCArray)>
@@ -161,6 +205,7 @@ namespace uibuilder {
 		setter(CCNode, contentSize, setContentSize, CCSize const&)
 		setter(CCNode, visible, setVisible, bool)
 		setter(CCNode, rotation, setRotation, float)
+		setter(CCNode, ignoreAnchorPointForPos, ignoreAnchorPointForPosition, bool)
 		setter(CCNode, child, addChild, CCNode*)
 		setter(CCNode, userData, setUserData, void*)
 		setter(CCNode, userObject, setUserObject, CCObject*)
@@ -224,6 +269,21 @@ namespace uibuilder {
 		}
 
 		template <needs_base(CCNode)>
+		Build<T> scaleBy(float amt) {
+			return scale(m_item->getScale() * amt);
+		}
+
+		template <needs_base(CCNode)>
+		Build<T> scaleXBy(float amt) {
+			return scaleX(m_item->getScaleX() * amt);
+		}
+
+		template <needs_base(CCNode)>
+		Build<T> scaleYBy(float amt) {
+			return scaleY(m_item->getScaleY() * amt);
+		}
+
+		template <needs_base(CCNode)>
 		Build<T> move(float x, float y) {
 			return pos(m_item->getPositionX() + x, m_item->getPositionY() + y);
 		}
@@ -234,8 +294,32 @@ namespace uibuilder {
 		}
 
 		template <needs_base(CCNode)>
+		Build<T> absoluteCenter() {
+			return absolutePos(CCPoint(CCDirector::sharedDirector()->getWinSize() / 2.0));
+		}
+
+		template <needs_base(CCNode)>
 		Build<T> center() {
-			return pos(CCPoint(CCDirector::sharedDirector()->getWinSize() / 2.0));
+			if (m_item->getParent() == nullptr)
+				return absoluteCenter();
+			else
+				return pos(m_item->getParent()->getContentSize() / 2);
+		}
+
+		template <needs_base(CCNode)>
+		Build<T> absolutePos(CCPoint const& p) {
+			if (m_item->getParent() == nullptr)
+				return pos(p);
+			else
+				return pos(m_item->getParent()->convertToNodeSpace(p));
+		}
+
+		template <needs_base(CCNode)>
+		Build<T> matchPos(CCNode* other) {
+			if (other->getParent() != nullptr)
+				return absolutePos(other->getParent()->convertToWorldSpace(other->getPosition()));
+			else
+				return absolutePos(other->getPosition());
 		}
 
 		template <needs_base(CCNode)>
@@ -255,9 +339,14 @@ namespace uibuilder {
 		template <needs_base(CCNode)>
 		Build<T> schedule(std::function<void(float)> fn, int repeat = -1) {
 			auto node = BuildSchedule::create(fn);
-			node->schedule(schedule_selector(BuildSchedule::onSchedule), repeat);	
+			node->schedule(schedule_selector(BuildSchedule::onSchedule), repeat);
 			m_item->addChild(node);
 			return *this;
+		}
+
+		template <needs_base(CCNode)>
+		Build<CCAction> intoAction(int tag) {
+			return Build<CCAction>(m_item->getActionByTag(tag));
 		}
 
 		// Geode stuff
@@ -275,6 +364,12 @@ namespace uibuilder {
 		Build<U> intoChildByID(std::string const& id) {
 			return Build<U>(static_cast<U*>(m_item->getChildByID(id)));
 		}
+
+		template <typename U = CCNode, needs_base(CCNode)>
+		Build<U> intoChildRecurseID(std::string const& id) {
+			return Build<U>(static_cast<U*>(m_item->getChildByIDRecursive(id)));
+		}
+
 
 		#endif
 
@@ -298,12 +393,12 @@ namespace uibuilder {
 		setter(CCLayer, touchPrio, setTouchPriority, bool)
 		setter(CCLayer, keypad_enabled, setKeypadEnabled, bool)
 
-		// template <needs_base(CCLayer)>
-		// Build<T> initTouch() {
-		// 	registerTouchDispatcher();
-		// 	CCDirector::sharedDirector()->getTouchDispatcher()->incrementForcePrio(2);
-		// 	return touchEnabled(true).mouseEnabled(true);
-		// }
+		template <needs_base(CCLayer)>
+		Build<T> initTouch() {
+			touchEnabled(true).mouseEnabled(true).touchMode(kCCTouchesOneByOne);
+			CCDirector::sharedDirector()->getTouchDispatcher()->registerForcePrio(m_item, 2);
+			return *this;
+		}
 
 		template <needs_base(CCLayer)>
 		Build<CCScene> intoScene() {
@@ -341,6 +436,12 @@ namespace uibuilder {
 		// CCMenuItemSpriteExtra
 		setter(CCMenuItemSpriteExtra, sizeMult, setSizeMult, float)
 
+		template <needs_base(CCMenuItemSpriteExtra)>
+		Build<T> scaleMult(float p0) {
+			this->m_item->m_scaleMultiplier = p0;
+			return *this;
+		}
+
 		// CCMenuItemToggler
 		template <needs_same(CCMenuItemToggler)>
 		static Build<T> createToggle(CCSprite* on, CCSprite* off, std::function<void(CCMenuItemToggler*)> fn) {
@@ -351,7 +452,7 @@ namespace uibuilder {
 				off,
 				bc,
 				menu_selector(BuildCallback<CCMenuItemSpriteExtra>::onCallback)
-			).child(bc);	
+			).child(bc);
 		}
 
 		// CCSprite
@@ -368,25 +469,56 @@ namespace uibuilder {
 		setter(CCSprite, dirty, setDirty, bool)
 		setter(CCSprite, flipX, setFlipX, bool)
 		setter(CCSprite, flipY, setFlipY, bool)
+		setter(CCSprite, blendFunc, setBlendFunc, ccBlendFunc)
 
-		template <needs_base(CCSprite)>
+		template <needs_base(CCNode)>
 		Build<CCMenuItemSpriteExtra> intoMenuItem(CCObject* target, SEL_MenuHandler selector) {
-			return Build<CCMenuItemSpriteExtra>::create(m_item, m_item, target, selector);
+			auto parent = m_item->getParent();
+			if (parent)
+				parent->removeChild(m_item);
+
+			auto ret = Build<CCMenuItemSpriteExtra>::create(m_item, m_item, target, selector);
+			if (parent) ret.parent(parent);
+			return ret;
 		}
 
-		template <needs_base(CCSprite)>
+		template <needs_base(CCNode)>
 		Build<CCMenuItemSpriteExtra> intoMenuItem(std::function<void(CCMenuItemSpriteExtra*)> fn) {
 			auto bc = BuildCallback<CCMenuItemSpriteExtra>::create(fn);
-			m_item->addChild(bc);
 
-			return Build<CCMenuItemSpriteExtra>::create(
+			auto parent = m_item->getParent();
+			if (parent)
+				parent->removeChild(m_item);
+
+			auto ret = Build<CCMenuItemSpriteExtra>::create(
 				m_item,
 				m_item,
 				bc,
 				menu_selector(BuildCallback<CCMenuItemSpriteExtra>::onCallback)
-			);
+			).child(bc);
+			if (parent) ret.parent(parent);
+			return ret;
 		}
-		
+
+		// same as intoMenuItem except the callback can be with no args
+		template <needs_base(CCNode)>
+		Build<CCMenuItemSpriteExtra> intoMenuItem(std::function<void()> fn) {
+			auto bc = BuildCallback<CCMenuItemSpriteExtra>::create([fn = std::move(fn)](auto) { fn(); });
+
+			auto parent = m_item->getParent();
+			if (parent)
+				parent->removeChild(m_item);
+
+			auto ret = Build<CCMenuItemSpriteExtra>::create(
+				m_item,
+				m_item,
+				bc,
+				menu_selector(BuildCallback<CCMenuItemSpriteExtra>::onCallback)
+			).child(bc);
+			if (parent) ret.parent(parent);
+			return ret;
+		}
+
 
 		// CCLabelProtocol
 		setter(CCLabelProtocol, string, setString, const char*)
@@ -426,7 +558,6 @@ namespace uibuilder {
 
 		// CCAction
 		setter(CCAction, target, setTarget, CCNode*)
-		setter(CCAction, tag, setTag, int)
 		setter(CCAction, speedMod, setSpeedMod, float)
 
 		template <needs_base(CCAction), typename U>
@@ -465,9 +596,14 @@ namespace uibuilder {
 			return Build<CCRepeatForever>::create(m_item);
 		}
 
-		template <needs_base(CCActionInterval), typename U> requires std::derived_from<remove_build_t<U>, CCActionInterval>
+		template <needs_base(CCActionInterval), typename U> requires std::derived_from<remove_build_t<U>, CCFiniteTimeAction>
 		Build<CCSequence> sequence(U action) {
 			return Build<CCSequence>(CCSequence::create(m_item, remove_build<U>()(action), nullptr));
+		}
+
+		template <needs_base(CCActionInterval)>
+		Build<CCSequence> sequence(std::function<void()> cb) {
+			return sequence(BuildAction::create([fn = std::move(cb)](float dt) { fn(); }));
 		}
 
 		template <needs_base(CCActionInterval)>
